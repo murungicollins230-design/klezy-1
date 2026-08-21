@@ -1,0 +1,21 @@
+<resources>
+    <style name="Theme.Klezy" parent="android:Theme.Material.Light.NoActionBar" />
+
+    <!--
+      Theme.Klezy.Orb — this is what keeps OrbActivity a small floating
+      window instead of covering the screen. windowIsFloating + zeroed
+      minWidth/minHeight percentages let the window wrap the small Compose
+      content instead of Material's default dialog width. Actual pixel
+      size is still set explicitly in OrbActivity.onCreate via
+      window.setLayout() for reliability across OEM skins.
+    -->
+    <style name="Theme.Klezy.Orb" parent="android:Theme.Translucent.NoTitleBar">
+        <item name="android:windowIsFloating">true</item>
+        <item name="android:windowBackground">@android:color/transparent</item>
+        <item name="android:windowNoTitle">true</item>
+        <item name="android:windowIsTranslucent">true</item>
+        <item name="android:backgroundDimEnabled">true</item>
+        <item name="android:windowMinWidthMajor">0%</item>
+        <item name="android:windowMinWidthMinor">0%</item>
+    </style>
+</resources>

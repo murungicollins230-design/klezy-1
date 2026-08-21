@@ -1,0 +1,79 @@
+plugins {
+    id 'com.android.application'
+    id 'org.jetbrains.kotlin.android'
+    id 'com.google.gms.google-services' // P4 — requires google-services.json, see README
+}
+
+android {
+    namespace 'com.klezy.app'
+    compileSdk 34
+
+    defaultConfig {
+        applicationId "com.klezy.app"
+        // Bumped from 26 to 33 (Android 13) per compatibility target —
+        // your phone is on 14, so 13-and-up covers you with room to spare.
+        minSdk 33
+        targetSdk 34
+        versionCode 1
+        versionName "1.0"
+    }
+
+    buildFeatures {
+        buildConfig true
+        compose true
+    }
+
+    composeOptions {
+        kotlinCompilerExtensionVersion '1.5.14'
+    }
+
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_17
+        targetCompatibility JavaVersion.VERSION_17
+    }
+
+    kotlinOptions {
+        jvmTarget = '17'
+    }
+}
+
+dependencies {
+    implementation 'androidx.core:core-ktx:1.13.1'
+    implementation 'androidx.activity:activity-ktx:1.9.1'
+    implementation 'org.jetbrains.kotlinx:kotlinx-coroutines-android:1.8.1'
+
+    // Chat/Settings/lock-screen orb UI
+    implementation 'androidx.activity:activity-compose:1.9.1'
+    implementation 'androidx.lifecycle:lifecycle-runtime-ktx:2.8.4' // lifecycleScope, used by OrbActivity
+    implementation platform('androidx.compose:compose-bom:2024.06.00')
+    implementation 'androidx.compose.ui:ui'
+    implementation 'androidx.compose.runtime:runtime'
+    implementation 'androidx.compose.foundation:foundation'
+    implementation 'androidx.compose.material3:material3'
+    implementation 'androidx.compose.animation:animation'
+
+    // P2 — automation engine background scheduling, also used by InsightsWorker
+    implementation "androidx.work:work-runtime-ktx:2.9.0"
+
+    // P3 — wake word (requires Picovoice AccessKey + trained .ppn, see P3 README)
+    implementation "ai.picovoice:porcupine-android:3.0.2"
+
+    // P4 — Firebase (Spark/free plan: Auth, Firestore, Storage)
+    implementation platform('com.google.firebase:firebase-bom:33.1.0')
+    implementation 'com.google.firebase:firebase-auth-ktx'
+    implementation 'com.google.firebase:firebase-firestore-ktx'
+    implementation 'com.google.firebase:firebase-storage-ktx'
+    implementation 'org.jetbrains.kotlinx:kotlinx-coroutines-play-services:1.8.1'
+
+    // P5 — local media playback
+    implementation "androidx.media3:media3-exoplayer:1.4.1"
+    implementation "androidx.media3:media3-session:1.4.1"
+    // media3-session pulls in only a lightweight ListenableFuture shim by
+    // default, not full Guava — MediaControlRouter uses MoreExecutors,
+    // which needs the real thing declared explicitly or it won't resolve.
+    implementation "com.google.guava:guava:33.2.1-android"
+
+    // Groq — HTTP client + encrypted key storage
+    implementation "com.squareup.okhttp3:okhttp:4.12.0"
+    implementation "androidx.security:security-crypto:1.1.0-alpha06"
+}

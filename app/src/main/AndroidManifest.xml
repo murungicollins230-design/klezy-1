@@ -1,0 +1,125 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <!-- P1: device control -->
+    <uses-permission android:name="android.permission.CALL_PHONE" />
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
+
+    <!-- P2: automation engine -->
+    <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
+    <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE_SPECIAL_USE" />
+
+    <!-- P3: voice -->
+    <uses-permission android:name="android.permission.RECORD_AUDIO" />
+    <uses-permission android:name="android.permission.INTERNET" />
+
+    <!-- P5: media. minSdk is 33 (Android 13), so READ_MEDIA_AUDIO always
+         applies — no pre-13 READ_EXTERNAL_STORAGE fallback needed. -->
+    <uses-permission android:name="android.permission.READ_MEDIA_AUDIO" />
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE_MEDIA_PLAYBACK" />
+
+    <!-- Contacts -->
+    <uses-permission android:name="android.permission.READ_CONTACTS" />
+
+    <!-- Torch works without a runtime permission, no extra <uses-permission> needed -->
+
+    <application
+        android:allowBackup="true"
+        android:label="Klezy"
+        android:theme="@style/Theme.Klezy"
+        android:supportsRtl="true">
+        <!-- No android:icon set — add a launcher icon via Android Studio's
+             Image Asset tool (right-click res/ -> New -> Image Asset) before
+             your first build, or the default Android icon will be used. -->
+
+        <!-- Launcher entry point — deliberately minimal, see MainActivity's
+             own doc comment for why. -->
+        <activity
+            android:name=".MainActivity"
+            android:exported="true">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+
+        <!-- The orb — ONLY thing that appears on a wake word, locked or
+             unlocked. Small floating window (Theme.Klezy.Orb), not
+             fullscreen. Not exported: only Klezy's own wake-word
+             detection ever launches it. -->
+        <activity
+            android:name=".ui.OrbActivity"
+            android:theme="@style/Theme.Klezy.Orb"
+            android:exported="false"
+            android:excludeFromRecents="true" />
+        <!-- Showing over the lock screen is done programmatically via
+             setShowWhenLocked()/setTurnScreenOn() in OrbActivity.onCreate —
+             there's no manifest attribute for this, those are the real APIs. -->
+
+        <!-- Only reachable by saying "open chat" -->
+        <activity
+            android:name=".ui.ChatActivity"
+            android:exported="false" />
+
+        <!-- Only reachable by saying "open settings" or tapping the
+             first-run prompt on MainActivity -->
+        <activity
+            android:name=".ui.SettingsActivity"
+            android:exported="false" />
+
+        <!-- P1: Accessibility Service — reads screen, taps, types, scrolls -->
+        <service
+            android:name=".accessibility.KlezyAccessibilityService"
+            android:permission="android.permission.BIND_ACCESSIBILITY_SERVICE"
+            android:exported="true">
+            <intent-filter>
+                <action android:name="android.accessibilityservice.AccessibilityService" />
+            </intent-filter>
+            <meta-data
+                android:name="android.accessibilityservice"
+                android:resource="@xml/klezy_accessibility_service_config" />
+        </service>
+
+        <!-- P1: Notification Listener -->
+        <service
+            android:name=".notifications.KlezyNotificationListener"
+            android:permission="android.permission.BIND_NOTIFICATION_LISTENER_SERVICE"
+            android:exported="true">
+            <intent-filter>
+                <action android:name="android.service.notification.NotificationListenerService" />
+            </intent-filter>
+        </service>
+
+        <!-- P2/P4/wake-word: automation engine AND wake-word listening now
+             both live here (see KlezyForegroundService's doc comment for why) -->
+        <service
+            android:name=".automation.KlezyForegroundService"
+            android:exported="false"
+            android:foregroundServiceType="specialUse">
+            <property
+                android:name="android.app.PROPERTY_SPECIAL_USE_FGS_SUBTYPE"
+                android:value="klezy_automation_engine" />
+        </service>
+
+        <!-- P2: restarts the automation/wake-word service after reboot -->
+        <receiver
+            android:name=".automation.BootReceiver"
+            android:exported="true">
+            <intent-filter>
+                <action android:name="android.intent.action.BOOT_COMPLETED" />
+            </intent-filter>
+        </receiver>
+
+        <!-- P5: background media playback -->
+        <service
+            android:name=".media.MediaPlaybackService"
+            android:foregroundServiceType="mediaPlayback"
+            android:exported="true">
+            <intent-filter>
+                <action android:name="androidx.media3.session.MediaSessionService" />
+            </intent-filter>
+        </service>
+
+    </application>
+</manifest>

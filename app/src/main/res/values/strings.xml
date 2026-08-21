@@ -1,0 +1,4 @@
+<resources>
+    <string name="app_name">Klezy</string>
+    <string name="accessibility_service_description">Lets Klezy see what\'s on screen and tap, type, or scroll on your behalf when you ask it to control an app.</string>
+</resources>

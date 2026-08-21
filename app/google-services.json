@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "640488685223",
+    "project_id": "klezy-fc5f0",
+    "storage_bucket": "klezy-fc5f0.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:640488685223:android:366938e34f5af9dfbd6582",
+        "android_client_info": {
+          "package_name": "com.klezy.app"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCPhMrIV25ZSgTOFnMBRU08Gj9GzeiPRxc"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
